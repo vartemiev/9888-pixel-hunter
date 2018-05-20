@@ -11,6 +11,8 @@ const mqpacker = require('css-mqpacker');
 const minify = require('gulp-csso');
 const rename = require('gulp-rename');
 const imagemin = require('gulp-imagemin');
+const rollup = require('gulp-better-rollup');
+const sourcemaps = require('gulp-sourcemaps');
 
 gulp.task('style', function () {
   return gulp.src('sass/style.scss')
@@ -35,12 +37,6 @@ gulp.task('style', function () {
     .pipe(gulp.dest('build/css'));
 });
 
-gulp.task('scripts', function () {
-  return gulp.src('js/**/*.js')
-    .pipe(plumber())
-    .pipe(gulp.dest('build/js/'));
-});
-
 gulp.task('test', function () {
 });
 
@@ -58,6 +54,15 @@ gulp.task('copy-html', function () {
   return gulp.src('*.{html,ico}')
     .pipe(gulp.dest('build'))
     .pipe(server.stream());
+});
+
+gulp.task('scripts', function () {
+  return gulp.src('js/main.js')
+    .pipe(plumber())
+    .pipe(sourcemaps.init())
+    .pipe(rollup({}, 'iife'))
+    .pipe(sourcemaps.write(''))
+    .pipe(gulp.dest('build/js'));
 });
 
 gulp.task('copy', ['copy-html', 'scripts', 'style'], function () {
