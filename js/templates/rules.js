@@ -1,18 +1,11 @@
-import {createElement} from '../create-element';
-import {showScreen} from '../show-screen';
-import firstGame from './game-1';
-import greeting from './greeting';
+import {createElement, composeElements} from '../create-element';
+import getFooter from './footer';
+import getHeader from './header';
 
-const template = `
-  <header class="header">
-    <div class="header__back">
-      <button class="back">
-        <img src="img/arrow_left.svg" width="45" height="45" alt="Back">
-        <img src="img/logo_small.svg" width="101" height="44">
-      </button>
-    </div>
-  </header>
-  <div class="rules">
+export default (data) => {
+  const {gotoNextScreen, goBack, setName} = data;
+
+  const template = `
     <h1 class="rules__title">Правила</h1>
     <p class="rules__description">Угадай 10 раз для каждого изображения фото <img
       src="img/photo_icon.png" width="16" height="16"> или рисунок <img
@@ -27,28 +20,24 @@ const template = `
       <input class="rules__input" type="text" placeholder="Ваше Имя">
       <button class="rules__button  continue" type="submit" disabled>Go!</button>
     </form>
-  </div>
-  <footer class="footer">
-    <a href="https://htmlacademy.ru" class="social-link social-link--academy">HTML Academy</a>
-    <span class="footer__made-in">Сделано в <a href="https://htmlacademy.ru" class="footer__link">HTML Academy</a> &copy; 2016</span>
-    <div class="footer__social-links">
-      <a href="https://twitter.com/htmlacademy_ru" class="social-link  social-link--tw">Твиттер</a>
-      <a href="https://www.instagram.com/htmlacademy/" class="social-link  social-link--ins">Инстаграм</a>
-      <a href="https://www.facebook.com/htmlacademy" class="social-link  social-link--fb">Фэйсбук</a>
-      <a href="https://vk.com/htmlacademy" class="social-link  social-link--vk">Вконтакте</a>
-    </div>
-  </footer>
-`;
+  `;
 
-const rules = createElement(template);
-const rulesInput = rules.querySelector(`.rules__input`);
-const rulesButton = rules.querySelector(`.rules__button`);
-const backButton = rules.querySelector(`.back`);
+  const rules = createElement(template, {classList: [`rules`]});
+  const rulesInput = rules.querySelector(`.rules__input`);
+  const rulesButton = rules.querySelector(`.rules__button`);
 
-backButton.addEventListener(`click`, () => showScreen(greeting));
-rulesButton.addEventListener(`click`, () => showScreen(firstGame));
-rulesInput.addEventListener(`input`, (evt) => {
-  rulesButton.disabled = evt.target.value === ``;
-});
+  rulesButton.addEventListener(`click`, () => {
+    setName(rulesInput.value);
+    gotoNextScreen();
+  });
 
-export default rules;
+  rulesInput.addEventListener(`input`, (evt) => {
+    rulesButton.disabled = evt.target.value === ``;
+  });
+
+  return composeElements([
+    getHeader({gameStatisticsOn: false, goBack}),
+    rules,
+    getFooter()
+  ]);
+};
