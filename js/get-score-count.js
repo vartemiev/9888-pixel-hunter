@@ -1,5 +1,4 @@
-const QUESTIONS_COUNT = 10;
-const LIVE_BONUS = 50;
+import {QUESTIONS_COUNT, LIVE_BONUS, AnswerValues} from './constants';
 
 export default function getScoreCount(answers, livesCount) {
   if (answers.length < QUESTIONS_COUNT || livesCount < 0) {
@@ -7,7 +6,7 @@ export default function getScoreCount(answers, livesCount) {
   }
 
   return answers.reduce((score, answer) => {
-    score += answer;
+    score += AnswerValues[answer];
     return score;
   }, 0) + livesCount * LIVE_BONUS;
 }
