@@ -9,11 +9,11 @@ export const createElement = (template, options = {}) => {
 };
 
 export const composeElements = (elements) => {
-  const fragment = document.createDocumentFragment();
+  const container = document.createElement(`span`);
 
   for (let el of elements) {
-    fragment.appendChild(el);
+    container.appendChild(el);
   }
 
-  return fragment;
+  return container;
 };

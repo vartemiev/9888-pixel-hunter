@@ -3,6 +3,7 @@ export const LIVE_BONUS = 50;
 export const INTRO_SCREEN = 0;
 export const GREETING_SCREEN = 1;
 export const STATS_SCREEN = 13;
+export const LIVES_COUNT = 3;
 
 export const PicTypes = {
   PAINTING: `PAINTING`,

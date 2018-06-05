@@ -2,18 +2,18 @@ import {showScreen} from './show-screen';
 import {model, generateQuestion} from './data/game-data';
 import {ScreenTypes, AnswerTypes, GREETING_SCREEN, INTRO_SCREEN, STATS_SCREEN, QUESTIONS_COUNT} from './constants';
 
-import getIntro from './templates/intro';
-import getGreeting from './templates/greeting';
-import getRules from './templates/rules';
-import getStats from './templates/stats';
-import getFirstGame from './templates/game-1';
-import getSecondGame from './templates/game-2';
-import getThirdGame from './templates/game-3';
+import IntroView from './views/IntroView';
+import GreetingView from './views/GreetingView';
+import RulesView from './views/RulesView';
+import StatsView from './views/StatsView';
+import ThoOfThoView from './views/ThoOfThoView';
+import OneOfThreeView from './views/OneOfThreeView';
+import PhotoOrPaintView from './views/PhotoOrPaintView';
 
 const LevelConstructors = {
-  [ScreenTypes.THO_OF_THO]: getFirstGame,
-  [ScreenTypes.PHOTO_OR_PAINT]: getSecondGame,
-  [ScreenTypes.ONE_OF_THREE]: getThirdGame,
+  [ScreenTypes.THO_OF_THO]: ThoOfThoView,
+  [ScreenTypes.PHOTO_OR_PAINT]: PhotoOrPaintView,
+  [ScreenTypes.ONE_OF_THREE]: OneOfThreeView,
 };
 
 let currentQuestion = null;
@@ -56,30 +56,35 @@ const gotoScreen = (screenNumber) => {
     gotoScreen(GREETING_SCREEN);
   };
 
-  let nextScreen = null;
+  let nextScreenView = null;
 
   switch (screenType) {
     case ScreenTypes.INTRO:
-      nextScreen = getIntro({gotoNextScreen});
+      nextScreenView = new IntroView();
+      nextScreenView.onClick = gotoNextScreen;
+
       break;
 
     case ScreenTypes.GREETING:
-      nextScreen = getGreeting({gotoNextScreen, goBack});
+      nextScreenView = new GreetingView();
+      nextScreenView.onClick = gotoNextScreen;
+
       break;
 
     case ScreenTypes.RULES:
-      nextScreen = getRules({
-        gotoNextScreen,
-        setName: (name) => model.setName(name),
-        goBack
-      });
+      nextScreenView = new RulesView();
+      nextScreenView.onGoBack = goBack;
+      nextScreenView.onClick = (name) => {
+        model.setName(name);
+        gotoNextScreen();
+      };
+
       break;
 
     case ScreenTypes.STATS:
-      nextScreen = getStats({
-        statistics: model.state.statistics[model.state.name],
-        goBack
-      });
+      nextScreenView = new StatsView({statistics: model.state.statistics[model.state.name]});
+      nextScreenView.onGoBack = goBack;
+
       break;
 
     case ScreenTypes.THO_OF_THO:
@@ -87,17 +92,19 @@ const gotoScreen = (screenNumber) => {
     case ScreenTypes.PHOTO_OR_PAINT:
       currentQuestion = generateQuestion(screenType);
 
-      nextScreen = LevelConstructors[screenType]({
+      nextScreenView = new LevelConstructors[screenType]({
         livesCount: model.state.livesCount,
         options: currentQuestion.options,
         answers: model.state.answers,
-        setAnswer: (answer) => setAnswer(answer, gotoNextScreen),
-        goBack
       });
+
+      nextScreenView.onSetAnswer = (answer) => setAnswer(answer, gotoNextScreen);
+      nextScreenView.onGoBack = goBack;
+
       break;
   }
 
-  showScreen(nextScreen);
+  showScreen(nextScreenView.element);
 };
 
 gotoScreen(INTRO_SCREEN);
