@@ -1,4 +1,4 @@
-import {AnswerTypes, Images, PicTypes, QUESTIONS_COUNT, ScreenTypes} from '../constants';
+import {AnswerTypes, Images, LIVES_COUNT, PicTypes, QUESTIONS_COUNT, ScreenTypes} from '../constants';
 import getScoreCount from '../get-score-count';
 
 const getRandom = (start, end) => start + Math.floor(Math.random() * (end + 1));
@@ -16,7 +16,7 @@ const createScreens = () => {
 };
 
 const getInitialState = () => ({
-  livesCount: 3,
+  livesCount: LIVES_COUNT,
   answers: [],
   screens: createScreens(),
   name: null,
