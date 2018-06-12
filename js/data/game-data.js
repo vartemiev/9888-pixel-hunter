@@ -1,112 +1,73 @@
-import {AnswerTypes, Images, LIVES_COUNT, PicTypes, QUESTIONS_COUNT, ScreenTypes} from '../constants';
+import {AnswerTypes, LIVES_COUNT, QUESTIONS_COUNT} from '../constants';
 import getScoreCount from '../get-score-count';
 
-const getRandom = (start, end) => start + Math.floor(Math.random() * (end + 1));
+export default class Model {
+  constructor() {
+    this._statistics = {};
 
-const createScreens = () => {
-  const preparatoryScreens = [ScreenTypes.INTRO, ScreenTypes.GREETING, ScreenTypes.RULES];
-  const gameScreenTypes = [ScreenTypes.THO_OF_THO, ScreenTypes.PHOTO_OR_PAINT, ScreenTypes.ONE_OF_THREE];
-  const gameScreens = Array(QUESTIONS_COUNT)
-      .fill(null)
-      .map(() => gameScreenTypes[getRandom(0, gameScreenTypes.length - 1)]);
+    this._setInitialState();
+  }
 
-  return preparatoryScreens
-      .concat(gameScreens)
-      .concat(ScreenTypes.STATS);
-};
+  _setInitialState() {
+    this._livesCount = LIVES_COUNT;
+    this._answers = [];
+    this._name = ``;
+  }
 
-const getInitialState = () => ({
-  livesCount: LIVES_COUNT,
-  answers: [],
-  screens: createScreens(),
-  name: null,
-});
+  get answers() {
+    return this._answers;
+  }
 
-const state = Object.assign({statistics: {}}, getInitialState());
+  get livesCount() {
+    return this._livesCount;
+  }
 
-export const model = Object.assign({state}, {
-  setAnswer(answer) {
-    this.state.answers.push(answer);
-  },
-  reduceLives() {
-    --this.state.livesCount;
-  },
+  get statistics() {
+    return this._statistics[this._name];
+  }
+
   setName(name) {
-    this.state.name = name;
-  },
-  saveGameResult() {
-    const {statistics, name, answers, livesCount} = this.state;
+    this._name = name;
+  }
 
-    if (!statistics[name]) {
-      statistics[name] = [];
+  setAnswer(answer) {
+    this._answers.push(answer);
+  }
+
+  reduceLives() {
+    --this._livesCount;
+  }
+
+  saveGameResult() {
+    const {_statistics, _name, _answers, _livesCount} = this;
+
+    if (!_statistics[_name]) {
+      _statistics[_name] = [];
     }
 
-    if (answers.length === QUESTIONS_COUNT) {
-      statistics[name] = [
+    if (_answers.length === QUESTIONS_COUNT) {
+      _statistics[_name] = [
         {
-          speedBonus: answers.filter((answer) => answer === AnswerTypes.FAST).length,
-          slownessPenalty: answers.filter((answer) => answer === AnswerTypes.SLOW).length,
-          livesCount,
-          answers,
-          total: getScoreCount(answers, livesCount)
+          speedBonus: _answers.filter((answer) => answer === AnswerTypes.FAST).length,
+          slownessPenalty: _answers.filter((answer) => answer === AnswerTypes.SLOW).length,
+          livesCount: _livesCount,
+          answers: _answers,
+          total: getScoreCount(_answers, _livesCount)
         },
-        ...statistics[name]
+        ..._statistics[_name]
       ];
     } else {
-      const unknownAnswers = Array(QUESTIONS_COUNT - answers.length)
+      const unknownAnswers = Array(QUESTIONS_COUNT - _answers.length)
           .fill(AnswerTypes.UNKNOWN);
 
-      statistics[name] = [
-        {answers: answers.concat(unknownAnswers)},
-        ...statistics[name]
+      _statistics[_name] = [
+        {answers: _answers.concat(unknownAnswers)},
+        ..._statistics[_name]
       ];
     }
-  },
+  }
+
   resetGame() {
-    this.state = Object.assign(this.state, getInitialState());
+    this._setInitialState();
   }
-});
-
-export const generateQuestion = (type) => {
-  let question = null;
-
-  switch (type) {
-    case ScreenTypes.THO_OF_THO:
-      question = {
-        type: ScreenTypes.THO_OF_THO,
-        options: [
-          {src: Images.PAINTINGS[getRandom(0, 2)], type: PicTypes.PAINTING},
-          {src: Images.PHOTOS[getRandom(0, 2)], type: PicTypes.PHOTO},
-        ],
-        answer: {
-          first: PicTypes.PAINTING,
-          second: PicTypes.PHOTO,
-        }
-      };
-      break;
-
-    case ScreenTypes.PHOTO_OR_PAINT:
-      question = {
-        type: ScreenTypes.PHOTO_OR_PAINT,
-        options: [
-          {src: Images.PAINTINGS[getRandom(0, 2)], type: PicTypes.PAINTING}
-        ],
-        answer: PicTypes.PAINTING
-      };
-      break;
-
-    case ScreenTypes.ONE_OF_THREE:
-      question = {
-        type: ScreenTypes.PHOTO_OR_PAINT,
-        options: [
-          {src: Images.PHOTOS[getRandom(0, 2)], type: PicTypes.PHOTO},
-          {src: Images.PHOTOS[getRandom(0, 2)], type: PicTypes.PHOTO},
-          {src: Images.PAINTINGS[getRandom(0, 2)], type: PicTypes.PAINTING}
-        ],
-        answer: PicTypes.PAINTING
-      };
-      break;
-  }
-
-  return question;
-};
+}
