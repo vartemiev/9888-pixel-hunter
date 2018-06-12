@@ -1,9 +1,9 @@
 export const QUESTIONS_COUNT = 10;
 export const LIVE_BONUS = 50;
-export const INTRO_SCREEN = 0;
-export const GREETING_SCREEN = 1;
-export const STATS_SCREEN = 13;
 export const LIVES_COUNT = 3;
+export const START_TIME = 30;
+export const FAST_TIME_RANGE = 20;
+export const SLOW_TIME_RANGE = 10;
 
 export const PicTypes = {
   PAINTING: `PAINTING`,
