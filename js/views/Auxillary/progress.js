@@ -1,6 +1,6 @@
 import {createElement} from '../../create-element';
 import {QUESTIONS_COUNT} from '../../constants';
-import AbstractView from '../Abstract/AbstractView';
+import AbstractView from '../Abstract/abstract';
 
 export default class ProgressView extends AbstractView {
   constructor({answers}) {

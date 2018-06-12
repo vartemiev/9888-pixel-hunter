@@ -1,21 +1,21 @@
 import {composeElements, createElement} from '../create-element';
 import {PicTypes} from '../constants';
-import AbstractView from './Abstract/AbstractView';
-import HeaderView from './Auxillary/HeaderView';
-import FooterView from './Auxillary/FooterView';
-import ProgressView from './Auxillary/ProgressView';
+import AbstractView from './Abstract/abstract';
+import HeaderView from './Auxillary/header';
+import FooterView from './Auxillary/footer';
+import ProgressView from './Auxillary/progress';
 
 export default class ThoOfThoView extends AbstractView {
-  constructor({options, answers, livesCount}) {
+  constructor({options, answers, livesCount, initialTime}) {
     super();
 
     this._options = options;
     this._answers = answers;
-    this._livesCount = livesCount;
 
     const headerData = {
       gameStatisticsOn: true,
-      livesCount: this._livesCount
+      initialTime,
+      livesCount
     };
     this._headerView = new HeaderView(headerData);
 
@@ -74,5 +74,9 @@ export default class ThoOfThoView extends AbstractView {
 
   onGoBack() {
 
+  }
+
+  onTimeTick(newTime) {
+    this._headerView.onTimeTick(newTime);
   }
 }

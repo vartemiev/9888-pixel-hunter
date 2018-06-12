@@ -1,15 +1,18 @@
 import {LIVES_COUNT} from '../../constants';
-import {createElement} from "../../create-element";
-import AbstractView from "../Abstract/AbstractView";
+import {createElement} from '../../create-element';
+import AbstractView from '../Abstract/abstract';
 
 export default class HeaderView extends AbstractView {
-  constructor({gameStatisticsOn, livesCount}) {
+  constructor({gameStatisticsOn, livesCount, initialTime}) {
     super();
 
     this._gameStatisticsOn = gameStatisticsOn;
     this._lives = Array(LIVES_COUNT)
         .fill(`img/heart__full.svg`, 0, livesCount)
         .fill(`img/heart__empty.svg`, livesCount, LIVES_COUNT + 1);
+
+    this._initialTime = initialTime;
+    this._timeField = this.element.querySelector(`.game__timer`);
 
     this.bind();
   }
@@ -23,7 +26,7 @@ export default class HeaderView extends AbstractView {
         </button>
       </div>
       ${this._gameStatisticsOn ? (`
-        <h1 class="game__timer"></h1>
+        <h1 class="game__timer">${this._initialTime}</h1>
         <div class="game__lives">
           ${this._lives.map((life) => `
             <img src="${life}" class="game__heart" alt="Life" width="32" height="32">
@@ -39,6 +42,14 @@ export default class HeaderView extends AbstractView {
 
   bind() {
     this.element.querySelector(`.back`).addEventListener(`click`, () => this.onGoBack());
+  }
+
+  onTimeTick(newTime) {
+    if (newTime === 5) {
+      this._timeField.classList.add(`game__timer--blink`);
+    }
+
+    this._timeField.textContent = newTime;
   }
 
   onGoBack() {

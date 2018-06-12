@@ -1,6 +1,6 @@
 import {composeElements, createElement} from '../create-element';
-import AbstractView from './Abstract/AbstractView';
-import FooterView from './Auxillary/FooterView';
+import AbstractView from './Abstract/abstract';
+import FooterView from './Auxillary/footer';
 
 export default class IntroView extends AbstractView {
   constructor() {
