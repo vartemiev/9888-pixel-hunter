@@ -1,7 +1,7 @@
 import {composeElements, createElement} from '../create-element';
-import AbstractView from './Abstract/AbstractView';
-import HeaderView from './Auxillary/HeaderView';
-import FooterView from './Auxillary/FooterView';
+import AbstractView from './Abstract/abstract';
+import HeaderView from './Auxillary/header';
+import FooterView from './Auxillary/footer';
 
 export default class RulesView extends AbstractView {
   constructor() {
